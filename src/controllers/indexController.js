@@ -6,30 +6,37 @@ import Usuario from "../models/Usuario.js";
 export const indexController = {
 
      HomePage: async(req,res) =>{
-        if(req.user){
-            const usuario = await Usuario.findById(req.user.id)
+         let usuario = null
+         if (req.user){
+            usuario = await Usuario.findById(req.user.id)
+         }
             //Obtener las últimas 3 recetas creadas
             const recetas = await Recetas.find({}).sort({_id:-1}).limit(3);
             const categorias = await Categoria.find({});
             res.render('home',{usuario,recetas,categorias});
-        }else{
-            const recetas = await Recetas.find({}).sort({_id:-1}).limit(3);
-            const categorias = await Categoria.find({});
-            res.render('home',{recetas,categorias,usuario:null});
-        }
+      
+        
         
     },
     //Inicio de sesión
      Login: (req,res) => {
-        res.render('usuarios/inicio');
+        let usuario = null
+        if (req.user){
+           usuario = await Usuario.findById(req.user.id)
+        }
+        res.render('usuarios/inicio',{usuario});
     },
     //Inicio de sesión
      Register: (req,res) => {
-        res.render('usuarios/registro');
+        let usuario = null
+        if (req.user){
+           usuario = await Usuario.findById(req.user.id)
+        }
+        res.render('usuarios/registro',{usuario});
     },
     //Perfil
     Profile: async (req,res) => {
-        const user = req.user;
+
         const usuario = await Usuario.findById(req.user.id)
         const recetas = await Recetas.find({usuario: usuario.id})
         res.render('usuarios/perfil',{usuario,recetas});
